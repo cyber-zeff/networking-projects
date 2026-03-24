@@ -1,0 +1,3 @@
+[submodule "comp-networks-sem4/web-crawler"]
+	path = comp-networks-sem4/web-crawler
+	url = https://github.com/cyber-zeff/web_crawler
