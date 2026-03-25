@@ -13,17 +13,17 @@ class DNSFlags:
 
     def pack(self) -> int:
         val = 0
-        val != (self.qr & 0x1) << 15
-        val != (self.opcode & 0xF) << 11
-        val != (self.aa & 0x1) << 10
-        val != (self.tc & 0x1) << 9
-        val != (self.rd & 0x1) << 8
-        val != (self.ra & 0x1) << 7
-        val != (self.rcode & 0xF)
+        val |= (self.qr & 0x1) << 15
+        val |= (self.opcode & 0xF) << 11
+        val |= (self.aa & 0x1) << 10
+        val |= (self.tc & 0x1) << 9
+        val |= (self.rd & 0x1) << 8
+        val |= (self.ra & 0x1) << 7
+        val |= (self.rcode & 0xF)
         return val
     
     @classmethod
-    def uppack(cls, val: int) -> "DNSFlags":
+    def unpack(cls, val: int) -> "DNSFlags":
         f = cls()
         f.qr = (val >> 15) & 0x1
         f.opcode = (val >> 11) & 0xF
@@ -200,3 +200,43 @@ class DNSMessage:
                 f"qr={self.flags.qr}, "
                 f"questions={self.questions}, "
                 f"answers={self.answers})")
+    
+
+if __name__ == "__main__":
+    print("=== TEST 1: Build & pack a QUERY ===")
+    q_msg = DNSMessage()
+    q_msg.flags = DNSFlags(qr=0, rd=1)
+    q_msg.questions.append(DNSQuestion("google.com", QTYPE_A))
+    raw = q_msg.to_bytes()
+    print(f"Packed  : {len(raw)} bytes  hex={raw[:12].hex()}")
+    print(q_msg.pretty())
+ 
+    print("\n=== TEST 2: Unpack the same bytes ===")
+    restored = DNSMessage.from_bytes(raw)
+    print(restored.pretty())
+    assert restored.msg_id == q_msg.msg_id, "ID mismatch!"
+    assert restored.questions[0].qname == "google.com", "qname mismatch!"
+ 
+    print("\n=== TEST 3: Build a RESPONSE with A + NS + MX records ===")
+    r_msg = DNSMessage(msg_id=restored.msg_id)
+    r_msg.flags = DNSFlags(qr=1, aa=1, ra=1, rd=1)
+    r_msg.questions = restored.questions
+ 
+    # A records
+    r_msg.answers.append(DNSRecord("google.com", QTYPE_A,  "64.233.187.99"))
+    r_msg.answers.append(DNSRecord("google.com", QTYPE_A,  "72.14.207.99"))
+    r_msg.answers.append(DNSRecord("google.com", QTYPE_A,  "64.233.167.99"))
+ 
+    # NS records
+    r_msg.authority.append(DNSRecord("google.com", QTYPE_NS, "ns1.google.com"))
+    r_msg.authority.append(DNSRecord("google.com", QTYPE_NS, "ns2.google.com"))
+ 
+    # MX records
+    r_msg.additional.append(DNSRecord("google.com", QTYPE_MX, "10 smtp1.google.com"))
+    r_msg.additional.append(DNSRecord("google.com", QTYPE_MX, "10 smtp2.google.com"))
+ 
+    raw2 = r_msg.to_bytes()
+    restored2 = DNSMessage.from_bytes(raw2)
+    print(restored2.pretty())
+ 
+    print("\n✓ All tests passed — dns_message.py is ready.")
