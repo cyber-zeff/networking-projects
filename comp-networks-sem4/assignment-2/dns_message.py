@@ -38,3 +38,30 @@ class DNSFlags:
         return (f"DNSFlags(qr={self.qr}, aa={self.aa}, "
                 f"rd={self.rd}, ra={self.ra}, rcode={self.rcode})")
     
+
+# dns record types
+QTYPE_A = 1
+QTYPE_NS = 2
+QTYPE_MX = 15
+QTYPE_ANY = 255
+
+QTYPE_NAMES = {
+    QTYPE_A: "A",
+    QTYPE_NS: "NS",
+    QTYPE_MX: "MX",
+    QTYPE_ANY: "ANY",
+}
+
+
+# dns question sec
+class DNSQuestion:
+    def __init__(self, qname: str, qtype: int = QTYPE_A, qclass: int = 1):
+        self.qname = qname.lower().strip(".")
+        self.qtype = qtype
+        self.qclass = qclass
+    
+    def __repr__(self):
+        return (f"DNSQuestion(qname:'{self.qname}', "
+                f"qtype={QTYPE_NAMES.get(self.qtype, self.qtype)})")
+    
+
