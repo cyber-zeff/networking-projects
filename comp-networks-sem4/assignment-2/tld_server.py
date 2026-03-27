@@ -76,7 +76,7 @@ def run():
     print(f"[TLD] Knows domains: {list(TLD_ZONE.keys())}\n")
 
     while True:
-        data, addr = sock.recvform(4096)
+        data, addr = sock.recvfrom(4096)
         print(f"[TLD] Received query from {addr}")
         try:
             msg = DNSMessage.from_bytes(data)
