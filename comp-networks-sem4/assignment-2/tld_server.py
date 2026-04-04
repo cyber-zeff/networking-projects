@@ -16,7 +16,7 @@ TLD_ZONE = {
 
     "umass.edu" : ("ns1.umass.edu", "127.0.0.1", 5302),
     "mit.edu" : ("ns1.mit.edu", "127.0.0.1", 5302),
-    "standford.edu" : ("ns1.standford.edu", "127.0.0.1", 5302),
+    "stanford.edu" : ("ns1.stanford.edu", "127.0.0.1", 5302),
     "nu.edu.pk" : ("ns1.nu.edu.pk", "127.0.0.1", 5302),
 
     "wikipedia.org" : ("ns1.wikipedia.org", "127.0.0.1", 5302),
