@@ -144,15 +144,15 @@ class DNSMessage:
                 )
             elif tag == "AN" and len(parts) >= 5:
                 msg.answers.append(
-                    DNSRecord(parts[1], int(parts[2]), parts[4], int(parts[3]))
+                    DNSRecord(parts[1], int(parts[2]), ":".join(parts[4:]), int(parts[3]))
                 )
             elif tag == "NS" and len(parts) >= 5:
                 msg.authority.append(
-                    DNSRecord(parts[1], int(parts[2]), parts[4], int(parts[3]))
+                    DNSRecord(parts[1], int(parts[2]), ":".join(parts[4:]), int(parts[3]))
                 )
             elif tag == "AR" and len(parts) >= 5:
                 msg.additional.append(
-                    DNSRecord(parts[1], int(parts[2]), parts[4], int(parts[3]))
+                    DNSRecord(parts[1], int(parts[2]), ":".join(parts[4:]), int(parts[3]))
                 )
         
         return msg
