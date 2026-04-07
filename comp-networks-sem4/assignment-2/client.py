@@ -17,7 +17,7 @@ def query(domain: str, qtype: int = QTYPE_ANY) -> DNSMessage:
         data, _ = sock.recvfrom(4096)
         return DNSMessage.from_bytes(data)
     except socket.timeout:
-        print(f"[CLIENT] ✗ Request timed out — is local_dns.py running?")
+        print(f"[CLIENT] Request timed out — is local_dns.py running?")
         sys.exit(1)
     finally:
         sock.close()
