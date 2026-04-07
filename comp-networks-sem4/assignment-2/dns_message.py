@@ -79,7 +79,6 @@ class DNSRecord:
         return f"DNSRecord({tname} {self.name} -> {self.rdata} [ttl={self.ttl}])"
     
 
-
 HEADER_FORMAT = "!HHHHHH"
 HEADER_SIZE = struct.calcsize(HEADER_FORMAT)
 
