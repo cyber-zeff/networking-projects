@@ -182,7 +182,7 @@ def run_gbn(pkt_count=6, pkt_size=10, win_size=4, loss_prob=0.2, corrupt_prob=0.
     sender = GBNSender(channel, win_size=win_size)
 
     data_list = []
-    for i in range(pkt_):
+    for i in range(pkt_count):
         data = f"PKT{i:02d}" + ("X" * max(0, pkt_size - 5))
         data_list.append(data[:pkt_size])
 
@@ -198,3 +198,16 @@ def run_gbn(pkt_count=6, pkt_size=10, win_size=4, loss_prob=0.2, corrupt_prob=0.
         print(f"    [{idx}] {d}")
     print("=" * 65)
 
+
+if __name__ == "__main__":
+    print("\n SCENARIO 1: no issues (perfect scenario)")
+    run_gbn(pkt_count=6, win_size=3, loss_prob=0.0, corrupt_prob=0.0, delay_prob=0.0)
+
+    print("\n SCENARIO 2: pkr loss")
+    run_gbn(pkt_count=6, win_size=3, loss_prob=0.4, corrupt_prob=0.0, delay_prob=0.0)
+
+    print("\n SCENARIO 3: corruption")
+    run_gbn(pkt_count=6, win_size=3, loss_prob=0.0, corrupt_prob=0.4, delay_prob=0.0)
+
+    print("\n SCENARIO 4: all together (loss + corruption + delay)")
+    run_gbn(pkt_count=6, win_size=3, loss_prob=0.2, corrupt_prob=0.2, delay_prob=0.2)
