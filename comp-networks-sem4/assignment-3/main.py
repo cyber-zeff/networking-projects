@@ -62,15 +62,6 @@ def get_custom_params(needs_window=False):
 
 # example runs
 def run_protocol_menu(protocol_name, run_func, needs_window=False):
-    """
-    Shows the scenario menu for a specific protocol and runs it.
- 
-    Parameters:
-        protocol_name (str) : Display name e.g. "rdt 3.0"
-        run_func      (func): The run_* function to call
-        needs_window  (bool): Whether to show window size param
-    """
-    # Default window size for windowed protocols
     default_window = 4
  
     while True:
@@ -121,6 +112,7 @@ def run_protocol_menu(protocol_name, run_func, needs_window=False):
         again = input("\nRun another scenario for this protocol? (y/n): ").strip().lower()
         if again != "y":
             break
+
 
 def run_all_protocols():
     PACKET_COUNT = 5
