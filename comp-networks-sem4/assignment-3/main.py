@@ -58,3 +58,171 @@ def get_custom_params(needs_window=False):
     if needs_window:
         params["window_size"] = get_int("Window size N", 4)
     return params
+
+
+# example runs
+def run_protocol_menu(protocol_name, run_func, needs_window=False):
+    """
+    Shows the scenario menu for a specific protocol and runs it.
+ 
+    Parameters:
+        protocol_name (str) : Display name e.g. "rdt 3.0"
+        run_func      (func): The run_* function to call
+        needs_window  (bool): Whether to show window size param
+    """
+    # Default window size for windowed protocols
+    default_window = 4
+ 
+    while True:
+        print(f"\n  Protocol: {protocol_name}")
+        print_scenario_menu()
+        choice = input("  Your choice: ").strip()
+ 
+        # ── Scenario 1: Clean ──
+        if choice == "1":
+            args = dict(packet_count=6, packet_size=10,
+                        loss_prob=0.0, corrupt_prob=0.0, delay_prob=0.0)
+            if needs_window:
+                args["window_size"] = default_window
+            run_func(**args)
+ 
+        # ── Scenario 2: Loss only ──
+        elif choice == "2":
+            args = dict(packet_count=6, packet_size=10,
+                        loss_prob=0.4, corrupt_prob=0.0, delay_prob=0.0)
+            if needs_window:
+                args["window_size"] = default_window
+            run_func(**args)
+ 
+        # ── Scenario 3: Corruption only ──
+        elif choice == "3":
+            args = dict(packet_count=6, packet_size=10,
+                        loss_prob=0.0, corrupt_prob=0.4, delay_prob=0.0)
+            if needs_window:
+                args["window_size"] = default_window
+            run_func(**args)
+ 
+        # ── Scenario 4: All conditions ──
+        elif choice == "4":
+            args = dict(packet_count=6, packet_size=10,
+                        loss_prob=0.3, corrupt_prob=0.3, delay_prob=0.2)
+            if needs_window:
+                args["window_size"] = default_window
+            run_func(**args)
+ 
+        # ── Scenario 5: Custom ──
+        elif choice == "5":
+            params = get_custom_params(needs_window=needs_window)
+            run_func(**params)
+ 
+        else:
+            print("  Invalid choice.")
+ 
+        # After running, ask to run again or go back
+        again = input("\n  Run another scenario for this protocol? (y/n): ").strip().lower()
+        if again != "y":
+            break
+
+# =============================================================================
+# RUN ALL — the big demo function
+# =============================================================================
+ 
+def run_all_protocols():
+    """
+    Runs all 3 protocols across all 4 test scenarios automatically.
+    Perfect for the assignment demo — shows everything in one go.
+    """
+    PACKET_COUNT = 5
+    PACKET_SIZE  = 10
+    WINDOW_SIZE  = 3
+ 
+    # 4 scenarios: (label, loss, corrupt, delay)
+    scenarios = [
+        ("SCENARIO 1: Clean (no loss, no corruption)",          0.0, 0.0, 0.0),
+        ("SCENARIO 2: Packet Loss only",                        0.4, 0.0, 0.0),
+        ("SCENARIO 3: Corruption only",                         0.0, 0.4, 0.0),
+        ("SCENARIO 4: All conditions (loss + corrupt + delay)", 0.3, 0.3, 0.2),
+    ]
+ 
+    print("\n" + "=" * 65)
+    print("  FULL DEMO — All 3 Protocols x All 4 Scenarios")
+    print(f"  Packet count={PACKET_COUNT}, Packet size={PACKET_SIZE}, "
+          f"Window N={WINDOW_SIZE}")
+    print("=" * 65)
+ 
+    for label, loss, corrupt, delay in scenarios:
+ 
+        print(f"\n{'#' * 65}")
+        print(f"  {label}")
+        print(f"  loss={loss}  corrupt={corrupt}  delay={delay}")
+        print(f"{'#' * 65}")
+ 
+        # ── rdt 3.0 ──
+        print(f"\n{'─' * 65}")
+        print("  PROTOCOL: rdt 3.0 (Stop-and-Wait)")
+        print(f"{'─' * 65}")
+        run_rdt30(packet_count=PACKET_COUNT, packet_size=PACKET_SIZE,
+                  loss_prob=loss, corrupt_prob=corrupt, delay_prob=delay)
+ 
+        # ── GBN ──
+        print(f"\n{'─' * 65}")
+        print("  PROTOCOL: Go-Back-N")
+        print(f"{'─' * 65}")
+        run_gbn(packet_count=PACKET_COUNT, packet_size=PACKET_SIZE,
+                window_size=WINDOW_SIZE,
+                loss_prob=loss, corrupt_prob=corrupt, delay_prob=delay)
+ 
+        # ── SR ──
+        print(f"\n{'─' * 65}")
+        print("  PROTOCOL: Selective Repeat")
+        print(f"{'─' * 65}")
+        run_sr(packet_count=PACKET_COUNT, packet_size=PACKET_SIZE,
+               window_size=WINDOW_SIZE,
+               loss_prob=loss, corrupt_prob=corrupt, delay_prob=delay)
+ 
+    print("\n" + "=" * 65)
+    print("  FULL DEMO COMPLETE")
+    print("=" * 65)
+ 
+ 
+# =============================================================================
+# MAIN LOOP
+# =============================================================================
+ 
+def main():
+    print_banner()
+ 
+    while True:
+        print_menu()
+        choice = input("  Your choice: ").strip()
+ 
+        if choice == "1":
+            # rdt 3.0 has no window, so needs_window=False
+            run_protocol_menu("rdt 3.0 — Stop-and-Wait",
+                              run_rdt30, needs_window=False)
+ 
+        elif choice == "2":
+            run_protocol_menu("Go-Back-N (GBN)",
+                              run_gbn,   needs_window=True)
+ 
+        elif choice == "3":
+            run_protocol_menu("Selective Repeat (SR)",
+                              run_sr,    needs_window=True)
+ 
+        elif choice == "4":
+            run_all_protocols()
+ 
+        elif choice == "5":
+            print("\n  Exiting. Goodbye!\n")
+            break
+ 
+        else:
+            print("  Invalid choice. Please enter 1–5.")
+ 
+ 
+# =============================================================================
+# ENTRY POINT
+# =============================================================================
+ 
+if __name__ == "__main__":
+    main()
