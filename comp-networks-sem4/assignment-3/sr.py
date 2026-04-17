@@ -240,12 +240,7 @@ def run_sr(pkt_count=6, pkt_size=10, win_size=4,
     print("=" * 65)
  
  
-# =============================================================================
-# ENTRY POINT
-# =============================================================================
- 
 if __name__ == "__main__":
- 
     print("\nSCENARIO 1: no issues")
     run_sr(pkt_count=5, win_size=3,
            loss_prob=0.0, corrupt_prob=0.0, delay_prob=0.0)
