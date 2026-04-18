@@ -69,7 +69,7 @@ def run_protocol_menu(protocol_name, run_func, needs_window=False):
         print_scenario_menu()
         choice = input("  Your choice: ").strip()
  
-        # ── Scenario 1: Clean ──
+        # Scenario 1 -- Perfect scenario
         if choice == "1":
             args = dict(packet_count=6, packet_size=10,
                         loss_prob=0.0, corrupt_prob=0.0, delay_prob=0.0)
@@ -77,7 +77,7 @@ def run_protocol_menu(protocol_name, run_func, needs_window=False):
                 args["window_size"] = default_window
             run_func(**args)
  
-        # ── Scenario 2: Loss only ──
+        # Scenario 2 -- Loss only
         elif choice == "2":
             args = dict(packet_count=6, packet_size=10,
                         loss_prob=0.4, corrupt_prob=0.0, delay_prob=0.0)
@@ -85,7 +85,7 @@ def run_protocol_menu(protocol_name, run_func, needs_window=False):
                 args["window_size"] = default_window
             run_func(**args)
  
-        # ── Scenario 3: Corruption only ──
+        # Scenario 3 -- Corruption only
         elif choice == "3":
             args = dict(packet_count=6, packet_size=10,
                         loss_prob=0.0, corrupt_prob=0.4, delay_prob=0.0)
@@ -93,7 +93,7 @@ def run_protocol_menu(protocol_name, run_func, needs_window=False):
                 args["window_size"] = default_window
             run_func(**args)
  
-        # ── Scenario 4: All conditions ──
+        # Scenario 4 -- All conditions
         elif choice == "4":
             args = dict(packet_count=6, packet_size=10,
                         loss_prob=0.3, corrupt_prob=0.3, delay_prob=0.2)
@@ -101,7 +101,7 @@ def run_protocol_menu(protocol_name, run_func, needs_window=False):
                 args["window_size"] = default_window
             run_func(**args)
  
-        # ── Scenario 5: Custom ──
+        # Scenario 5 -- Custom
         elif choice == "5":
             params = get_custom_params(needs_window=needs_window)
             run_func(**params)
