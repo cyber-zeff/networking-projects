@@ -21,7 +21,7 @@ class RDT30Sender:
         pkt = Packet(seq_num = self.seq_num, data = data)
         retries = 0
         
-        while retries < MAX_RETRIES:
+        while retries <= MAX_RETRIES:
             self.state = "WAIT_FOR_ACK"
             print(f"[SENDER] Sending: seq num: {self.seq_num}, data: '{data}'"
                   f"Attempt: {retries + 1}")
