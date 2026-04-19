@@ -84,14 +84,15 @@ class GBNSender:
 
                 ack_n = ack.ack_num
                 print(f"[GBN SENDER] ACK received for seq: {ack_n}")
+                old_base = self.base
                 while self.base <= ack_n and self.base < total:
                     confirmed_seq = self.base % self.seq_space
-                    if confirmed_seq in self.win:
-                        print(f"[GBN SENDER] PKT seq: {confirmed_seq}"
-                              f"(data idx {self.base}) acknowledged!!")
-                        del self.win[confirmed_seq]
+                    if confirmed_seq in self.window:
+                        del self.window[confirmed_seq]
                         self.sent_count += 1
                     self.base += 1
+
+                if self.base > old_base:
                     retries = 0
 
             # 4 -- timeout check
@@ -116,16 +117,20 @@ class GBNSender:
 _gbn_receiver_state = {
     "expected_seq": 0,
     "last_ack_num": -1,
-    "received_data": []
+    "received_data": [],
+    "seq_space": 8
 }
 
 def reset_gbn_receiver(seq_space=8):
     _gbn_receiver_state["expected_seq"] = 0
     _gbn_receiver_state["last_ack_num"] = -1
     _gbn_receiver_state["received_data"] = []
+    _gbn_receiver_state["seq_space"] = seq_space
+    
 
 def gbn_receiver_fsm(packet, log_prefix=""):
     expected = _gbn_receiver_state["expected_seq"]
+    seq_space = _gbn_receiver_state["seq_space"]
 
     # 1 -- PKT LOST
     if packet is None:
@@ -155,7 +160,7 @@ def gbn_receiver_fsm(packet, log_prefix=""):
           f"data: '{packet.data}'")
     _gbn_receiver_state["received_data"].append(packet.data)
     _gbn_receiver_state["last_ack_num"] = packet.seq_num
-    _gbn_receiver_state["expected_seq"] = (packet.seq_num + 1) 
+    _gbn_receiver_state["expected_seq"] = (packet.seq_num + 1) % seq_space
 
     ack = Packet(seq_num=0, is_ack=True, ack_num=packet.seq_num)
     print(f"[GBN RECEIVER {log_prefix}] sendingg ACK({packet.seq_num})")
