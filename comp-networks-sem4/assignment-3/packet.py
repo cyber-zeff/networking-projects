@@ -1,6 +1,7 @@
 # this is a utility file defining all the packet related funcs and classes
 
 import random
+import copy
 
 # helper funcs
 def calc_checksum(data):
@@ -13,7 +14,7 @@ def verify_checksum(packet):
 
 # packet class
 class Packet:
-    def __init__(self, seq_num, data="", is_ack=False, ack_num=1):
+    def __init__(self, seq_num, data="", is_ack=False, ack_num=-1):
         self.seq_num = seq_num
         self.data = data
         self.is_ack = is_ack
@@ -42,9 +43,10 @@ class UnreliableChannel:
         
         # 2 -- checking for corrupt pkt
         if random.random() < self.corrupt_prob:
-            packet.checksum += 1 # different checksum
+            corrupted = copy.copy(packet)
+            corrupted.checksum += 1 # different checksum
             print(f"{log_prefix} CORRUPTED PKT: {packet}")
-            return packet
+            return corrupted
         
         # 3 -- checking for delay
         if random.random() < self.delay_prob:
