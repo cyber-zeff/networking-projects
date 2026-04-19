@@ -23,7 +23,7 @@ class RDT30Sender:
         
         while retries < MAX_RETRIES:
             self.state = "WAIT_FOR_ACK"
-            print(f"[SENDER] Sending: seq num: {self.seq_num}, data: '{self.data}'"
+            print(f"[SENDER] Sending: seq num: {self.seq_num}, data: '{data}'"
                   f"Attempt: {retries + 1}")
             
             # send pkt through the unreliable channel
@@ -48,7 +48,7 @@ class RDT30Sender:
                       f"Packet delivered successfully")
                 self.seq_num = 1 - self.seq_num # flipping 0 -> 1 and vice versa
                 self.state = "WAIT_FOR_CALL"
-                self.send_count += 1
+                self.sent_count += 1
                 return True
             
             else:
@@ -150,7 +150,7 @@ def run_rdt30(pkt_count=5, pkt_size=10, loss_prob=0.2, corrupt_prob=0.2, delay_p
     print("\n" + "=" * 65)
     print("Simulation Complete")
     print("=" * 65)
-    print(f"Pkts sent successfully: {sender.send_count}/{pkt_count}")
+    print(f"Pkts sent successfully: {sender.sent_count}/{pkt_count}")
     print(f"Total retransmissions: {sender.retry_count}")
     print(f"Data Received (in order): ")
     for idx, d in enumerate(_receiver_state["received_data"]):
