@@ -191,7 +191,7 @@ def run_gbn(pkt_count=6, pkt_size=10, win_size=4, loss_prob=0.2, corrupt_prob=0.
     print("\n" + "=" * 65)
     print("Simulation Complete")
     print("=" * 65)
-    print(f"Pkts ACKed: {sender.send_count}/{pkt_count}")
+    print(f"Pkts ACKed: {sender.sent_count}/{pkt_count}")
     print(f"Total retransmissions: {sender.retry_count}")
     print(f"Data Received (in order): ")
     for idx, d in enumerate(_gbn_receiver_state["received_data"]):
