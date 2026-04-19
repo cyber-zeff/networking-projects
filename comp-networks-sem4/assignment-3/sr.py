@@ -13,7 +13,7 @@ class SRSender:
         self.next_seq = 0
         self.win = {}
         self.acked = {}
-        self.retrasmit = {}
+        self.retransmit = {}
         self.sent_count = 0
         self.retry_count = 0
         self.state = "READY"
@@ -62,10 +62,10 @@ class SRSender:
             for i in range(self.base, next_data_i):
                 seq = i % self.seq_space
  
-                if seq not in self.window:
+                if seq not in self.win:
                     continue
  
-                pkt = self.window[seq]
+                pkt = self.win[seq]
  
                 arrived = self.channel.transmit(
                     pkt, log_prefix=f"DELIVER -> RX seq={seq}"
@@ -124,7 +124,7 @@ class SRSender:
                     if seq in self.acked and not self.acked[seq]:
                         print(f"[SR SENDER] Retransmitting seq={seq} only.")
                         self.channel.transmit(
-                            self.window[seq],
+                            self.win[seq],
                             log_prefix=f"RETX -> RX seq={seq}"
                         )
  
@@ -142,11 +142,11 @@ _sr_receiver_state = {
     "window_size"  : 4,
 }
  
-def reset_sr_receiver(window_size=4):
+def reset_sr_receiver(win_size=4):
     _sr_receiver_state["rcv_base"] = 0
     _sr_receiver_state["buffer"] = {}
     _sr_receiver_state["received_data"] = []
-    _sr_receiver_state["window_size"] = window_size
+    _sr_receiver_state["window_size"] = win_size
  
  
 def sr_receiver_fsm(packet, log_prefix=""):
